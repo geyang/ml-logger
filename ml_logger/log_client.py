@@ -2,6 +2,7 @@ import os
 from concurrent.futures import ThreadPoolExecutor
 from contextlib import contextmanager
 from io import BytesIO, StringIO
+from typing import Union
 
 from ml_logger.requests import SyncRequests
 from ml_logger.serdes import serialize, deserialize
@@ -183,28 +184,34 @@ class LogClient:
             # buf.seek(0)
             # return buf
 
-    def save_buffer(self, buff, key):
-        # proxy = os.environ.get('HTTP_PROXY')
-        # c.setopt(c.PROXY, proxy)
-        # logger.print('proxy:', proxy)
-        if isinstance(buff, BytesIO):
-            from requests_toolbelt import MultipartEncoder
-            encoder = MultipartEncoder({'file': (key, buf), 'canary': true})
-            self.session.post(self.url, data=encoder, headers={'Content-Type': encoder.content_type})
-        elif isinstance(buff, StringIO):
-            from pycurl import Curl
-            c = Curl()
-            c.setopt(c.URL, self.url)
-            c.setopt(c.TIMEOUT, 3600)
-            c.setopt(c.HTTPPOST, [
-                ('file', (
-                    c.FORM_BUFFER, source_path,
-                    c.FORM_BUFFERPTR, buff.read(),
-                    c.FORM_CONTENTTYPE, 'plain/text',
-                )),
-            ])
-            c.perform()
-            c.close()
+    def save_buffer(
+        self,
+        buff: Union[BytesIO, StringIO, bytes],
+        key: str,
+    ):
+        """
+
+        :param buff: is relative to the local file system.
+        :param key: the key is relative to the current prefix.
+        :return:
+        """
+
+        if hasattr(buff, 'read'):
+            buff = buff.read()
+            
+        from pycurl import Curl
+
+        c = Curl()
+        c.setopt(c.URL, self.url)
+        c.setopt(c.TIMEOUT, 3600)
+        c.setopt(c.HTTPPOST, [
+            ('file', (
+                c.FORM_BUFFER, key,
+                c.FORM_BUFFERPTR, buff,
+            )),
+        ])
+        c.perform()
+        c.close()
 
     def save_file(self, source_path, key):
         """
@@ -324,13 +331,6 @@ class LogClient:
     def log_yaml(self, key, data):
         # does not support appending yet
         self._log(key, data, dtype="yaml")
-
-    # this should be deprecated, sending images this way is not ideal.
-    # sends out images
-    def send_image(self, key, data):
-        raise DeprecationWarning("send_image is deprecated. use log_buffer instead.")
-        assert data.dtype in ALLOWED_TYPES, "image data must be one of {}".format(ALLOWED_TYPES)
-        self._log(key, data, dtype="image", options=LogOptions(overwrite=True))
 
     # writes data
     def log_buffer(self, key, buf, **options):
