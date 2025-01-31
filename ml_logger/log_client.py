@@ -202,6 +202,8 @@ class LogClient:
         from pycurl import Curl
 
         c = Curl()
+        # this is to silent response prints
+        c.setopt(WRITEFUNCTION, lambda x: None)
         c.setopt(c.URL, self.url)
         c.setopt(c.TIMEOUT, 3600)
         c.setopt(c.HTTPPOST, [
