@@ -199,7 +199,7 @@ class LogClient:
         if hasattr(buff, 'read'):
             buff = buff.read()
             
-        from pycurl import Curl
+        from pycurl import Curl, WRITEFUNCTION
 
         c = Curl()
         # this is to silent response prints
