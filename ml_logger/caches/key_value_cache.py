@@ -18,8 +18,8 @@ class KeyValueCache:
 
     def pop_all(self):
         data = self.data.copy()
-        self.data.clear()
+        self.data = dict()
         return data
 
     def clear(self):
-        self.data.clear()
+        self.data = dict()

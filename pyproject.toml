@@ -68,7 +68,7 @@ line-length = 140
 
 [tool.poetry]
 name = "ml-logger"
-version = "0.10.33"
+version = "0.10.34"
 description = ""
 authors = ["Ge Yang <geyang@mit.edu>"]
 keywords = ["ml_logger", "visualization", "logging", "debug", "debugging"]

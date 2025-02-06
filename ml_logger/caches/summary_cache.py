@@ -75,7 +75,7 @@ class SummaryCache:
         |
         :param force_clear: (bool) forces clear the data store
         :param key_stats: (dict) a dictionary for the key and the statistic modes to be returned.
-        :param _key_stats: (**) key value pairs, as a short hand for the key_modes dictionary.
+        :param _key_stats: (**) key value pairs, as a shorthand for the key_modes dictionary.
         :return: dictionary of the keys and the statistics requested.
         """
         summary = self.summary_stats(key_stats=key_stats, **_key_stats)
@@ -84,6 +84,7 @@ class SummaryCache:
         return summary
 
     def clear(self):
+        self.data = self.data.copy()
         self.data.clear()
 
     def peek(self, *keys, len=5):
