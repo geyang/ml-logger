@@ -1,7 +1,7 @@
 from collections import defaultdict, deque
-import numpy as np
-from scipy import stats
+
 import more_itertools as mit
+import numpy as np
 
 AVERAGE_MODES = ["rolling", 'tiled']
 STAT_MODES = ["mean", "min_max", "std_dev", "quantile", "histogram"]
@@ -211,7 +211,7 @@ class SummaryCache:
                     # note: need make bin number configurable
                     metrics[k + "/hist"], metrics[k + "/divs"] = np.histogram(d, bins=10)
 
-        return metrics
+        return {k: float(v) for k, v in metrics.items()}
 
 
 def to_float(item):
