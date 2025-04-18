@@ -23,7 +23,7 @@ include = [
 requires-python = ">=3.8.0"
 dependencies = [
     "boto3",
-    "cloudpickle==1.3.0",
+    "cloudpickle==3.1.1",
     "dill",
     "expandvars",
     "google-api-python-client",
@@ -68,7 +68,7 @@ line-length = 140
 
 [tool.poetry]
 name = "ml-logger"
-version = "0.10.34"
+version = "0.10.35"
 description = ""
 authors = ["Ge Yang <geyang@mit.edu>"]
 keywords = ["ml_logger", "visualization", "logging", "debug", "debugging"]
@@ -93,7 +93,7 @@ ml-upload= "ml_logger.cli.upload:entrypoint"
 [tool.poetry.dependencies]
 python = ">=3.8.0"
 boto3 = "*"
-cloudpickle = "==1.3.0"
+cloudpickle = "==3.1.1"
 dill = "*"
 expandvars = "*"
 google-api-python-client = "*"
