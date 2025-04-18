@@ -60,6 +60,7 @@ def test_glob(setup):
 
 def test_log_data(setup):
     import numpy
+    numpy.random.seed(0)
     d1 = numpy.random.randn(20, 10)
     logger.log_data(d1, 'test_file.pkl')
     sleep(0.1)
@@ -75,6 +76,7 @@ def test_log_data(setup):
 
 def test_save_pkl_abs_path(setup):
     import numpy
+    numpy.random.seed(0)
 
     d1 = numpy.random.randn(20, 10)
     logger.save_pkl(d1, "/tmp/ml-logger-test/test_file_1.pkl")
