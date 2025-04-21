@@ -38,7 +38,7 @@ def log_dir(request):
 
 @pytest.fixture(scope="session")
 def setup(log_dir):
-    logger.configure('main_test_script', root=log_dir)
+    logger.configure('ml-logger/test_ml_logger', root=log_dir)
     print('cleaning this directory')
     logger.remove('')
     print(f"logging to {pathJoin(logger.root, logger.prefix)}")
@@ -46,7 +46,7 @@ def setup(log_dir):
 
 @pytest.fixture(scope="session")
 def setup_no_clean(log_dir):
-    logger.configure('main_test_script', root=log_dir)
+    logger.configure('ml-logger/test_ml_logger', root=log_dir)
 
     print(f"logging to {pathJoin(logger.root, logger.prefix)}")
 
@@ -98,32 +98,38 @@ def test(setup):
 
 
 def test_remove(setup):
-    logger.log('this is a file', file="test.txt", flush=True)
-    assert 'test.txt' in logger.glob("*")
-    logger.remove('test.txt')
-
+    logger.log('this is a file', file="test_remove.txt", flush=True)
+    sleep(0.2)
+    assert 'test_remove.txt' in logger.glob("*")
+    logger.remove('test_remove.txt')
 
 def test_move(setup):
-    logger.log('this is a file', file="test.txt", flush=True)
-    logger.move('test.txt', 'test_2.txt')
-    assert 'test_2.txt' in logger.glob("*")
-    logger.remove('test_2.txt')
+    logger.log('this is a file', file="test_move.txt", flush=True)
+    sleep(0.2)
+    logger.move('test_move.txt', 'test_move_2.txt')
+    sleep(0.2)
+    assert 'test_move_2.txt' in logger.glob("*")
+    logger.remove('test_move_2.txt')
 
 
 def test_copy_file(setup):
     logger.log('this is a file', file="test.txt", flush=True)
+    sleep(0.2)
     logger.duplicate('test.txt', 'test_2.txt')
+    sleep(0.2)
     assert 'test.txt' in logger.glob("*")
     assert 'test_2.txt' in logger.glob("*")
     logger.remove('test.txt', 'test_2.txt')
 
 
 def test_copy_directory(setup):
-    logger.log('this is a file', file="test/test.txt", flush=True)
-    logger.duplicate('test', 'test_2')
-    assert 'test/test.txt' in logger.glob("**/*")
-    assert 'test_2/test.txt' in logger.glob("**/*")
-    logger.remove('test.txt', 'test_2.txt')
+    logger.log('this is a file', file="test_copy_dir/test.txt", flush=True)
+    sleep(0.2)
+    logger.duplicate('test_copy_dir', 'test_copy_dir_2')
+    sleep(0.2)
+    assert 'test_copy_dir/test.txt' in logger.glob("**/*")
+    assert 'test_copy_dir_2/test.txt' in logger.glob("**/*")
+    logger.remove('test_copy_dir', 'test_copy_dir_2')
 
 
 def test_read_params(setup):
@@ -132,6 +138,7 @@ def test_read_params(setup):
     config = {'key_1': 10, 'key_2': 20}
 
     logger.log_params(Config=config)
+    sleep(0.2)
     config = logger.read_params('Config.key_1')
     assert config == 10
     assert logger.read_params('Config') == {'key_1': 10, 'key_2': 20}
@@ -179,6 +186,7 @@ def test_store_metrics_prefix(setup):
 def test_json(setup):
     a = dict(a=0)
     logger.save_json(dict(a=0), "data/d.json")
+    sleep(0.2)
     b = logger.load_json("data/d.json")
     assert a == b, "a and b should be the same"
 
@@ -186,6 +194,7 @@ def test_json(setup):
 def test_json_abs(setup):
     a = dict(a=0)
     logger.save_json(dict(a=0), "/tmp/ml-logger-test/data/d.json")
+    sleep(0.2)
     b = logger.load_json("/tmp/ml-logger-test/data/d.json")
     assert a == b, "a and b should be the same"
 
@@ -193,7 +202,7 @@ def test_json_abs(setup):
 def test_jsonl(setup):
     logger.log_jsonl(dict(a=10), "data/d.jsonl")
     logger.log_jsonl(dict(a=12), "data/d.jsonl")
-
+    sleep(0.2)
     result = logger.load_jsonl("data/d.jsonl")
     print(result)
 
@@ -201,20 +210,23 @@ def test_jsonl(setup):
 def test_yaml(setup):
     a = dict(a=0)
     logger.save_yaml(a, "data/d.yaml")
+    sleep(0.2)
     b = logger.load_yaml("data/d.yaml")
+
     assert a == b, "a and b should be identical"
+    logger.remove("data/d.yaml")
 
 
 def test_image(setup):
-    import scipy.misc
+    from skimage import data
     from ml_logger import logger
-
-    logger.configure('ge_debug/debug/main_test_script', root="http://luma01.csail.mit.edu:4000")
+    
+    logger.configure('ge_debug/debug/main_test_script', root="http://luma01.csail.mit.edu:4000") 
     logger.job_started()
-
+    
     print(logger)
-
-    face_rgba = scipy.misc.face()
+    
+    face_rgba = data.astronaut()
 
     logger.save_image(face_rgba / 255, 'rgb.png', normalize='grid')
     logger.save_image(face_rgba / 1000, f'rgba_face_{100}.png', normalize=False)
@@ -223,13 +235,13 @@ def test_image(setup):
 
 
 def test_image_cmap(setup):
-    import scipy.misc
+    from skimage import data
     import numpy as np
 
-    face_bw = scipy.misc.face().mean(axis=-1)
+    face_bw = data.astronaut().mean(axis=-1)
     # the image dtype can not be uint8 --- in that case no cmap is applied
-    logger.save_image(face_bw, f"face_bw_cmap.png", cmap="cool", normalize=True)
-    logger.save_image(face_bw.astype(np.uint8), f"face_bw_no_cmap.png")
+    logger.save_image(face_bw, "face_bw_cmap.png", cmap="cool", normalize=True)
+    logger.save_image(face_bw.astype(np.uint8), "face_bw_no_cmap.png")
 
 
 def test_image_zero_norm(setup):
@@ -247,10 +259,9 @@ def test_image_normalization(setup):
 
 
 def test_make_video(setup):
-    import scipy.misc
-    from time import sleep
+    from skimage import data
 
-    face = scipy.misc.face()
+    face = data.astronaut()
     h, w, _ = face.shape
     with logger.Sync():
         for i in range(10):
@@ -269,13 +280,13 @@ def test_make_video(setup):
 
 
 def test_pyplot(setup):
-    import scipy.misc
+    from skimage import data
     import matplotlib
     matplotlib.use('Agg')
     import matplotlib.pyplot as plt
     import numpy as np
 
-    face = scipy.misc.face()
+    face = data.astronaut()
     logger.save_image(face, "face.png")
 
     fig = plt.figure(figsize=(4, 2))
@@ -438,6 +449,9 @@ def test_job_status(setup):
 
 
 def test_get_exps(setup_no_clean):
+
+    logger.job_started()
+
     with logger.Prefix('..'):
         all = logger.get_exps("**/parameters.pkl")
         assert 'job.status' in all.columns
@@ -455,6 +469,14 @@ def test_shell(setup):
         os.makedirs(logger.root + "/" + logger.prefix, exist_ok=True)
 
     stdout, stderr, code = logger.shell("ls")
+    print("stdout:", stdout)
+    print("stderr", stderr)
+    print("code is", code)
+    if "shell commands are disabled. using --shell flag to turn it on." in stderr:
+        print("\033[you forgot to set the --shell flag on the logging server. This flag is needed to enable shell access (unsafe).")
+        raise EnvironmentError
+
+    assert len(stdout.strip()) > 0, "stdout should not be empty"
     assert code == 0, "return code should be 0"
 
 

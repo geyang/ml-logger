@@ -52,74 +52,11 @@ dependencies = [
 ]
 
 [project.scripts]
-# Note, add entrypoint name to scripts/completions/install.py to include CLI completion
 ml-download = "ml_logger.cli.download:entrypoint"
-ml-upload= "ml_logger.cli.upload:entrypoint"
+ml-upload = "ml_logger.cli.upload:entrypoint"
 
 [tool.setuptools.packages.find]
 include = ["ml_logger", "ml_logger.cli"]
 
 [tool.setuptools.package-data]
 "*" = []
-
-# black
-[tool.black]
-line-length = 140
-
-[tool.poetry]
-name = "ml-logger"
-version = "0.10.36"
-description = ""
-authors = ["Ge Yang <geyang@mit.edu>"]
-keywords = ["ml_logger", "visualization", "logging", "debug", "debugging"]
-classifiers = [
-    "Development Status :: 4 - Beta",
-    "Programming Language :: Python :: 3",
-    "Intended Audience :: Science/Research",
-]
-readme = "README.md"
-license = "MIT"
-homepage = "https://github.com/geyang/ml-logger"
-repository = "https://github.com/geyang/ml-logger"
-include = [
-    "LICENSE.md",
-]
-
-[tool.poetry.scripts]
-# Note, add entrypoint name to scripts/completions/install.py to include CLI completion
-ml-download = "ml_logger.cli.download:entrypoint"
-ml-upload= "ml_logger.cli.upload:entrypoint"
-
-[tool.poetry.dependencies]
-python = ">=3.8.0"
-boto3 = "*"
-cloudpickle = "==3.1.1"
-dill = "*"
-expandvars = "*"
-google-api-python-client = "*"
-google-cloud-storage = "*"
-imageio = "*"
-imageio-ffmpeg = "*"
-jaynes = ">=0.9.0"
-matplotlib = "*"
-more-itertools = "*"
-numpy = "*"
-pillow = "*"
-pycurl = "*"
-params-proto = ">=2.10.0"
-requests = "*"
-requests-futures = "*"
-requests-toolbelt = "*"
-"ruamel.yaml" = "*"
-sanic = "20.9.0"
-sanic-routing = "22.3.0"
-sanic-cors = "0.10.0.post3"
-scipy = "*"
-scikit-image = "*"
-scikit-video = "*"
-termcolor = "*"
-urllib3 = "*"
-wcmatch = "*"
-
-#[tool.poetry.scripts]
-#cli_command_name = 'package_name:function'

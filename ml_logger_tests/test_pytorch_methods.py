@@ -1,11 +1,11 @@
 """
 In this file we test the tensorflow specific logging methods.
 """
-import pytest
+from time import sleep
 import torch.nn as nn
 
 from ml_logger import logger
-from ml_logger_tests.test_ml_logger import setup, log_dir
+from ml_logger_tests.test_ml_logger import setup, log_dir # noqa
 from ml_logger_tests.conftest import LOCAL_TEST_DIR
 
 
@@ -47,25 +47,29 @@ demo_module = nn.Sequential(
 
 def test_torch_save(setup):
     logger.remove("modules/test_torch_save.pkl")
+    sleep(0.2)
     logger.torch_save(demo_module, "modules/test_torch_save.pkl")
 
 
 def test_torch_load(setup):
     with logger.Sync():
         test_torch_save(setup)
-    module = logger.torch_load("modules/test_torch_save.pkl")
+    sleep(0.2)
+    module = logger.torch_load("modules/test_torch_save.pkl",weights_only=False)
     print(module)
 
 
 def test_torch_load_sync(setup):
     with logger.Sync():
         test_torch_save(setup)
-        module = logger.torch_load("modules/test_torch_save.pkl")
+        sleep(0.2)
+        module = logger.torch_load("modules/test_torch_save.pkl",weights_only=False)
     print(module)
 
 
 def test_module(setup):
     logger.save_module(demo_module, "modules/test_module.pkl")
+    logger.remove("modules/test_module.pkl")
 
 
 def xtest_modules(setup):
@@ -73,8 +77,10 @@ def xtest_modules(setup):
 
 
 def test_load_module(setup):
-    test_module(setup)  # save the module weights first
-    logger.load_module(demo_module, "modules/test_module.pkl")
+    logger.save_module(demo_module, "modules/test_load_module.pkl")
+    sleep(0.2)
+    logger.load_module(demo_module, "modules/test_load_module.pkl")
+    logger.remove("modules/test_load_module.pkl")
 
 
 def test_jit_save(setup):
@@ -84,6 +90,7 @@ def test_jit_save(setup):
 def test_jit_load(setup):
     test_jit_save(setup)
     demo_module = logger.torch_jit_load("modules/test_module.pth")
+    logger.remove("modules/test_module.pth")
 
 
 if __name__ == "__main__":
