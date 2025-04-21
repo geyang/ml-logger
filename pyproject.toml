@@ -4,7 +4,7 @@ build-backend = "poetry.core.masonry.api"
 
 [project]
 name = "ml-logger"
-version = "0.10.35"
+version = "0.10.36"
 description = ""
 authors = ["Ge Yang <geyang@mit.edu>"]
 keywords = ["ml_logger", "visualization", "logging", "debug", "debugging"]
@@ -68,7 +68,7 @@ line-length = 140
 
 [tool.poetry]
 name = "ml-logger"
-version = "0.10.35"
+version = "0.10.36"
 description = ""
 authors = ["Ge Yang <geyang@mit.edu>"]
 keywords = ["ml_logger", "visualization", "logging", "debug", "debugging"]

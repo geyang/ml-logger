@@ -40,11 +40,11 @@ release:
 	git tag latest
 	git push origin --tags -f
 publish: convert-rst test
-	make wheel
-	twine upload dist/*
+	poetry build
+	poetry publish
 publish-no-test: convert-rst
-	make wheel
-	twine upload dist/*
+	poetry build
+	poetry publish
 test:
 	python -m pytest ml_logger_tests --capture=no
 start-test-server:
