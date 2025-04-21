@@ -118,7 +118,6 @@ scipy = "*"
 scikit-image = "*"
 scikit-video = "*"
 termcolor = "*"
-typing = "*"
 urllib3 = "*"
 wcmatch = "*"
 

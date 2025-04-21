@@ -57,4 +57,5 @@ deploy-vis-app-force:
 	git push ml-vis-ghpage `git subtree split --prefix ml-vis-app/build`:gh-pages --force
 build-vis-app:
 	cd ml-vis-app && yarn build
-
+clean:
+	rm -rf build dist ml_logger.egg-info
